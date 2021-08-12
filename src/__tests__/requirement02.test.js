@@ -15,3 +15,13 @@ describe('2 - Crie uma página de listagem de produtos vazia', () => {
     );
   });
 });
+
+<button
+  onClick={ () => apigetProductsFromCategoryAndQuery('', inputSearch) 
+    .then((search) => (this.setState({
+      search: search,
+    })))
+  }
+>
+
+</button>
