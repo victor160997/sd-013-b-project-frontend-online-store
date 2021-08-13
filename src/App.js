@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import MainPage from './Pages/MainPage';
 import * as api from './services/api';
-
 import './App.css';
 import ShoppingCart from './Pages/ShoppingCart';
 import ProductDetails from './Pages/ProductDetails';
@@ -116,6 +115,7 @@ export default class App extends Component {
                   search={ search }
                   setProductComments={ this.setProductComments }
                   productComments={ productComments }
+                  shoppingCart={ shoppingCart }
                 />
               );
             }

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import FormAddComment from '../Components/FormAddComment';
 import Comments from '../Components/Comments';
+import ShoppingCartIcon from '../Imgs/shopping-cart-solid.svg';
 
 export default class ProductDetails extends Component {
   constructor(props) {
@@ -35,7 +37,7 @@ export default class ProductDetails extends Component {
 
   render() {
     const { productDetail } = this.state;
-    const { match, setProductComments } = this.props;
+    const { match, setProductComments, shoppingCart } = this.props;
     const { id } = match.params;
     if (productDetail !== undefined) {
       return (
@@ -51,6 +53,25 @@ export default class ProductDetails extends Component {
               <li>{ productDetail.price }</li>
             </ul>
           </div>
+          <Link
+            to="/cart"
+            data-testid="shopping-cart-button"
+          >
+            <img className="cart-icon" alt="cart icon" src={ ShoppingCartIcon } />
+          </Link>
+          <button
+            type="submit"
+            data-testid="product-detail-add-to-cart"
+            onClick={ () => {
+              const ide = id;
+              shoppingCart.push({
+                title: productDetail.title,
+                id: ide,
+              });
+            } }
+          >
+            Adicionar ao Carrinho
+          </button>
           <FormAddComment id={ id } onSubmit={ setProductComments } />
           {
             this.getProductComments().length !== 0

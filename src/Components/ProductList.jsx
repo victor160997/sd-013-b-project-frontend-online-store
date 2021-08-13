@@ -15,7 +15,7 @@ export default class ProductList extends Component {
             <div
               data-testid="product"
             >
-              <span>
+              <span data-testid="shopping-cart-product-name">
                 { title }
               </span>
               <img src={ thumbnail } alt="img" />
