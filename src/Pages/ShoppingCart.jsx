@@ -5,22 +5,8 @@ import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '../Imgs/shopping-cart-solid.svg';
 
 export default class ShoppingCart extends Component {
-  constructor() {
-    super();
-    this.state = {
-      totalCart: 0,
-      oldTotalCart: 1,
-    };
-    this.getTotalCart = this.getTotalCart.bind(this);
-    this.refreshTotalCartState = this.refreshTotalCartState.bind(this);
-  }
-
-  componentDidUpdate() {
-    const { totalCart, oldTotalCart } = this.state;
-    if (totalCart !== oldTotalCart) {
-      this.getTotalCart();
-      this.refreshTotalCartState();
-    }
+  componentDidMount() {
+    this.getTotalCart();
   }
 
   getTotalCart() {
@@ -31,16 +17,7 @@ export default class ShoppingCart extends Component {
           acc + (currentValue.price * currentValue.cart_quantity)
         ), 0,
       );
-    this.setState({
-      totalCart: newTotalCart,
-    });
-  }
-
-  refreshTotalCartState() {
-    const { totalCart } = this.state;
-    this.setState({
-      oldTotalCart: totalCart,
-    });
+    return newTotalCart;
   }
 
   elementShoppingCartEmpty() {
@@ -56,7 +33,6 @@ export default class ShoppingCart extends Component {
       decreaseProductFromCart,
       deleteProductFromCart } = this.props;
     const emptyCart = (shoppingCart.length === 0);
-    const { totalCart } = this.state;
 
     return (
       <div>
@@ -116,7 +92,7 @@ export default class ShoppingCart extends Component {
               Valor Total da Compra:
             </span>
             R$
-            { totalCart }
+            { this.getTotalCart() }
           </h3>
         </div>
       </div>
