@@ -13,11 +13,11 @@ class MainPage extends Component {
   }
 
   printList(search) {
-    const { shoppingCart } = this.props;
+    const { addProductToCart } = this.props;
     return search.map((product) => {
       if (search.length !== 0) {
         return (
-          <div>
+          <div key={ `${product.id} ${product.title}` }>
             <ProductList
               id={ product.id }
               key={ product.id }
@@ -27,7 +27,7 @@ class MainPage extends Component {
               data-testid="product-add-to-cart"
               type="submit"
               onClick={ () => {
-                shoppingCart.push(product);
+                addProductToCart(product);
               } }
             >
               Adicionar ao Carrinho
@@ -101,12 +101,13 @@ MainPage.propTypes = {
   inputSearch: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   searchRequest: PropTypes.func.isRequired,
+  addProductToCart: PropTypes.func.isRequired,
   search: PropTypes.arrayOf(
     PropTypes.object,
   ).isRequired,
-  shoppingCart: PropTypes.arrayOf(
-    PropTypes.object,
-  ).isRequired,
+  // shoppingCart: PropTypes.arrayOf(
+  //   PropTypes.object,
+  // ).isRequired,
 };
 
 export default MainPage;

@@ -22,6 +22,9 @@ export default class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.searchRequest = this.searchRequest.bind(this);
     this.setProductComments = this.setProductComments.bind(this);
+    this.addProductToCart = this.addProductToCart.bind(this);
+    this.decreaseProductFromCart = this.decreaseProductFromCart.bind(this);
+    this.deleteProductFromCart = this.deleteProductFromCart.bind(this);
   }
 
   componentDidMount() {
@@ -70,6 +73,61 @@ export default class App extends Component {
     });
   }
 
+  addProductToCart(product) {
+    const { id, title, price } = product;
+    const newProduct = {
+      id,
+      title,
+      price,
+      cart_quantity: 1,
+    };
+    // verificar se existe o ítem no carrinho
+    const { shoppingCart } = this.state;
+    const currentItem = shoppingCart.filter((item) => item.id === newProduct.id);
+    // sim: acrescentar 1 na quantidade
+    if (currentItem.length === 0) {
+      this.setState(() => ({
+        shoppingCart: [...shoppingCart, newProduct],
+      }));
+    } else {
+      const newCart = shoppingCart.map((item) => {
+        if (item.id === newProduct.id) {
+          item.cart_quantity += 1;
+        }
+        return (item);
+      });
+      this.setState({
+        shoppingCart: newCart,
+      });
+    }
+  }
+
+  decreaseProductFromCart(id) {
+    const { shoppingCart } = this.state;
+    const newCart = shoppingCart.map((item) => {
+      if (item.id === id && item.cart_quantity > 0) {
+        item.cart_quantity -= 1;
+      }
+      return (item);
+    });
+    this.setState({
+      shoppingCart: newCart,
+    });
+  }
+
+  deleteProductFromCart(id) {
+    const { shoppingCart } = this.state;
+    const newCart = [];
+    shoppingCart.forEach((item) => {
+      if (item.id !== id) {
+        newCart.push(item);
+      }
+    });
+    this.setState({
+      shoppingCart: newCart,
+    });
+  }
+
   render() {
     const {
       categories,
@@ -94,13 +152,19 @@ export default class App extends Component {
               searchRequest={ this.searchRequest }
               search={ search }
               shoppingCart={ shoppingCart }
+              addProductToCart={ this.addProductToCart }
             />)
           }
         />
 
         <Route
           path="/cart"
-          render={ () => (<ShoppingCart shoppingCart={ shoppingCart } />) }
+          render={ () => (<ShoppingCart
+            shoppingCart={ shoppingCart }
+            decreaseProductFromCart={ this.decreaseProductFromCart }
+            addProductToCart={ this.addProductToCart }
+            deleteProductFromCart={ this.deleteProductFromCart }
+          />) }
         />
 
         <Route
@@ -116,6 +180,7 @@ export default class App extends Component {
                   setProductComments={ this.setProductComments }
                   productComments={ productComments }
                   shoppingCart={ shoppingCart }
+                  addProductToCart={ this.addProductToCart }
                 />
               );
             }

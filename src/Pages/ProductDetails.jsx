@@ -37,7 +37,7 @@ export default class ProductDetails extends Component {
 
   render() {
     const { productDetail } = this.state;
-    const { match, setProductComments, shoppingCart } = this.props;
+    const { match, setProductComments, addProductToCart } = this.props;
     const { id } = match.params;
     if (productDetail !== undefined) {
       return (
@@ -62,21 +62,13 @@ export default class ProductDetails extends Component {
           <button
             type="submit"
             data-testid="product-detail-add-to-cart"
-            onClick={ () => {
-              const ide = id;
-              shoppingCart.push({
-                title: productDetail.title,
-                id: ide,
-              });
-            } }
+            onClick={ () => addProductToCart(productDetail) }
           >
             Adicionar ao Carrinho
           </button>
           <FormAddComment id={ id } onSubmit={ setProductComments } />
-          {
-            this.getProductComments().length !== 0
-            && <Comments productComments={ this.getProductComments() } />
-          }
+          { this.getProductComments().length !== 0
+            && <Comments productComments={ this.getProductComments() } /> }
         </div>
       );
     }
@@ -87,6 +79,7 @@ export default class ProductDetails extends Component {
 }
 
 ProductDetails.propTypes = {
+  addProductToCart: PropTypes.func.isRequired,
   title: PropTypes.string,
   thumbnail: PropTypes.string,
   price: PropTypes.number,
