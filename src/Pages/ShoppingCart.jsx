@@ -5,6 +5,44 @@ import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '../Imgs/shopping-cart-solid.svg';
 
 export default class ShoppingCart extends Component {
+  constructor() {
+    super();
+    this.state = {
+      totalCart: 0,
+      oldTotalCart: 1,
+    };
+    this.getTotalCart = this.getTotalCart.bind(this);
+    this.refreshTotalCartState = this.refreshTotalCartState.bind(this);
+  }
+
+  componentDidUpdate() {
+    const { totalCart, oldTotalCart } = this.state;
+    if (totalCart !== oldTotalCart) {
+      this.getTotalCart();
+      this.refreshTotalCartState();
+    }
+  }
+
+  getTotalCart() {
+    const { shoppingCart } = this.props;
+    const newTotalCart = shoppingCart
+      .reduce(
+        (acc, currentValue) => (
+          acc + (currentValue.price * currentValue.cart_quantity)
+        ), 0,
+      );
+    this.setState({
+      totalCart: newTotalCart,
+    });
+  }
+
+  refreshTotalCartState() {
+    const { totalCart } = this.state;
+    this.setState({
+      oldTotalCart: totalCart,
+    });
+  }
+
   elementShoppingCartEmpty() {
     return (
       <p data-testid="shopping-cart-empty-message">Seu carrinho está vazio</p>
@@ -12,8 +50,13 @@ export default class ShoppingCart extends Component {
   }
 
   render() {
-    const { shoppingCart } = this.props;
+    const {
+      shoppingCart,
+      addProductToCart,
+      decreaseProductFromCart,
+      deleteProductFromCart } = this.props;
     const emptyCart = (shoppingCart.length === 0);
+    const { totalCart } = this.state;
 
     return (
       <div>
@@ -26,20 +69,55 @@ export default class ShoppingCart extends Component {
         {emptyCart && this.elementShoppingCartEmpty()}
         <div>
           {
-            shoppingCart.map((product, i) => {
-              const array = shoppingCart.filter((p) => p.id === product.id);
-              const cont = array.length;
-              if (i > 0 && product.id === shoppingCart[i - 1].id) {
-                return undefined;
-              }
-              return (
-                <div key={ product.title }>
-                  <p data-testid="shopping-cart-product-name">{ product.title }</p>
-                  <p data-testid="shopping-cart-product-quantity">{ cont }</p>
+            shoppingCart.map((product) => (
+              <div key={ product.id }>
+                <button
+                  type="button"
+                  onClick={ () => { deleteProductFromCart(product.id); } }
+                >
+                  X
+                </button>
+                <p data-testid="shopping-cart-product-name">{ product.title }</p>
+                <div>
+                  <button
+                    data-testid="product-decrease-quantity"
+                    type="button"
+                    onClick={ () => { decreaseProductFromCart(product.id); } }
+                  >
+                    -
+                  </button>
+                  <div data-testid="shopping-cart-product-quantity">
+                    { product.cart_quantity }
+                  </div>
+                  <button
+                    data-testid="product-increase-quantity"
+                    type="button"
+                    onClick={ () => { addProductToCart(product); } }
+                  >
+                    +
+                  </button>
+                  <div>
+                    R$
+                    { product.price }
+                    unidade
+                  </div>
+                  <div>
+                    R$
+                    { product.price * product.cart_quantity }
+                  </div>
                 </div>
-              );
-            })
+              </div>
+            ))
           }
+        </div>
+        <div>
+          <h3>
+            <span>
+              Valor Total da Compra:
+            </span>
+            R$
+            { totalCart }
+          </h3>
         </div>
       </div>
     );
@@ -48,4 +126,7 @@ export default class ShoppingCart extends Component {
 
 ShoppingCart.propTypes = {
   shoppingCart: PropTypes.arrayOf(PropTypes.object).isRequired,
+  addProductToCart: PropTypes.func.isRequired,
+  decreaseProductFromCart: PropTypes.func.isRequired,
+  deleteProductFromCart: PropTypes.func.isRequired,
 };
