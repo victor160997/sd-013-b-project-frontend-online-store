@@ -9,11 +9,13 @@ import ProductDetails from './Pages/ProductDetails';
 export default class App extends Component {
   constructor() {
     super();
-    this.state = {
+    this.state = JSON
+      .parse(window.localStorage.getItem('shoppingCart')) || {
       loadingCategories: true,
       categories: [],
       inputSearch: '',
       shoppingCart: [],
+      quantityTotalShoppingCart: 0,
       search: [],
       categoryFilter: '',
       categoryFilterOld: '',
@@ -25,6 +27,8 @@ export default class App extends Component {
     this.addProductToCart = this.addProductToCart.bind(this);
     this.decreaseProductFromCart = this.decreaseProductFromCart.bind(this);
     this.deleteProductFromCart = this.deleteProductFromCart.bind(this);
+    this.quantityTotalCart = this.quantityTotalCart.bind(this);
+    this.saveSession = this.saveSession.bind(this);
   }
 
   componentDidMount() {
@@ -35,6 +39,10 @@ export default class App extends Component {
           categories: result,
         }),
       );
+    const { quantityTotalShoppingCart, shoppingCart } = this.state;
+    if (quantityTotalShoppingCart === 0 && shoppingCart.length !== 0) {
+      this.quantityTotalCart();
+    }
   }
 
   componentDidUpdate() {
@@ -60,17 +68,13 @@ export default class App extends Component {
     const { inputSearch, categoryFilter } = this.state;
     api.getProductsFromCategoryAndQuery(categoryFilter, inputSearch)
       .then((apiSearch) => {
-        this.setState({
-          search: apiSearch.results,
-        });
+        this.setState({ search: apiSearch.results });
       });
   }
 
   refleshCategoryFilterState() {
     const { categoryFilter } = this.state;
-    this.setState({
-      categoryFilterOld: categoryFilter,
-    });
+    this.setState({ categoryFilterOld: categoryFilter });
   }
 
   addProductToCart(product) {
@@ -88,7 +92,9 @@ export default class App extends Component {
     if (currentItem.length === 0) {
       this.setState(() => ({
         shoppingCart: [...shoppingCart, newProduct],
-      }));
+      }), () => {
+        this.quantityTotalCart();
+      });
     } else {
       const newCart = shoppingCart.map((item) => {
         if (item.id === newProduct.id) {
@@ -98,6 +104,8 @@ export default class App extends Component {
       });
       this.setState({
         shoppingCart: newCart,
+      }, () => {
+        this.quantityTotalCart();
       });
     }
   }
@@ -112,6 +120,8 @@ export default class App extends Component {
     });
     this.setState({
       shoppingCart: newCart,
+    }, () => {
+      this.quantityTotalCart();
     });
   }
 
@@ -125,7 +135,44 @@ export default class App extends Component {
     });
     this.setState({
       shoppingCart: newCart,
+    }, () => {
+      this.quantityTotalCart();
     });
+  }
+
+  quantityTotalCart() {
+    const { shoppingCart } = this.state;
+    const retorno = shoppingCart
+      .reduce((acc, currentValue) => (acc + currentValue.cart_quantity), 0);
+    console.log(retorno);
+    this.setState({
+      quantityTotalShoppingCart: retorno,
+    });
+    this.saveSession();
+  }
+
+  saveSession() {
+    const { loadingCategories,
+      categories,
+      inputSearch,
+      shoppingCart,
+      quantityTotalShoppingCart,
+      search,
+      categoryFilter,
+      categoryFilterOld,
+      productComments } = this.state;
+    const session = {
+      loadingCategories,
+      categories,
+      inputSearch,
+      shoppingCart,
+      quantityTotalShoppingCart,
+      search,
+      categoryFilter,
+      categoryFilterOld,
+      productComments,
+    };
+    localStorage.setItem('shoppingCart', JSON.stringify(session));
   }
 
   render() {
@@ -134,6 +181,7 @@ export default class App extends Component {
       loadingCategories,
       inputSearch,
       shoppingCart,
+      quantityTotalShoppingCart,
       search,
       productComments } = this.state;
 
@@ -152,6 +200,7 @@ export default class App extends Component {
               searchRequest={ this.searchRequest }
               search={ search }
               shoppingCart={ shoppingCart }
+              quantityTotalShoppingCart={ quantityTotalShoppingCart }
               addProductToCart={ this.addProductToCart }
             />)
           }
@@ -161,6 +210,7 @@ export default class App extends Component {
           path="/cart"
           render={ () => (<ShoppingCart
             shoppingCart={ shoppingCart }
+            quantityTotalShoppingCart={ quantityTotalShoppingCart }
             decreaseProductFromCart={ this.decreaseProductFromCart }
             addProductToCart={ this.addProductToCart }
             deleteProductFromCart={ this.deleteProductFromCart }
@@ -180,6 +230,7 @@ export default class App extends Component {
                   setProductComments={ this.setProductComments }
                   productComments={ productComments }
                   shoppingCart={ shoppingCart }
+                  quantityTotalShoppingCart={ quantityTotalShoppingCart }
                   addProductToCart={ this.addProductToCart }
                 />
               );

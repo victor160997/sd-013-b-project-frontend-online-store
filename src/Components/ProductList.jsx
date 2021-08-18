@@ -9,9 +9,10 @@ export default class ProductList extends Component {
     return (
       <div id={ id }>
         <Link
+          data-testid="product-detail-link"
           to={ `/productDetails/${id}` }
         >
-          <div data-testid="product-detail-link">
+          <div>
             <div
               data-testid="product"
             >
