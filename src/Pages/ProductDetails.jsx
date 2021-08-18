@@ -37,7 +37,10 @@ export default class ProductDetails extends Component {
 
   render() {
     const { productDetail } = this.state;
-    const { match, setProductComments, addProductToCart } = this.props;
+    const { match,
+      setProductComments,
+      addProductToCart,
+      quantityTotalShoppingCart } = this.props;
     const { id } = match.params;
     if (productDetail !== undefined) {
       return (
@@ -58,6 +61,7 @@ export default class ProductDetails extends Component {
             data-testid="shopping-cart-button"
           >
             <img className="cart-icon" alt="cart icon" src={ ShoppingCartIcon } />
+            <span data-testid="shopping-cart-size">{ quantityTotalShoppingCart }</span>
           </Link>
           <button
             type="submit"

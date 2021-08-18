@@ -31,7 +31,8 @@ export default class ShoppingCart extends Component {
       shoppingCart,
       addProductToCart,
       decreaseProductFromCart,
-      deleteProductFromCart } = this.props;
+      deleteProductFromCart,
+      quantityTotalShoppingCart } = this.props;
     const emptyCart = (shoppingCart.length === 0);
 
     return (
@@ -41,6 +42,7 @@ export default class ShoppingCart extends Component {
           data-testid="shopping-cart-button"
         >
           <img className="cart-icon" alt="cart icon" src={ ShoppingCartIcon } />
+          <span data-testid="shopping-cart-size">{ quantityTotalShoppingCart }</span>
         </Link>
         {emptyCart && this.elementShoppingCartEmpty()}
         <div>
@@ -105,4 +107,5 @@ ShoppingCart.propTypes = {
   addProductToCart: PropTypes.func.isRequired,
   decreaseProductFromCart: PropTypes.func.isRequired,
   deleteProductFromCart: PropTypes.func.isRequired,
+  quantityTotalShoppingCart: PropTypes.number.isRequired,
 };

@@ -13,7 +13,7 @@ class MainPage extends Component {
   }
 
   printList(search) {
-    const { addProductToCart } = this.props;
+    const { addProductToCart, quantityTotalShoppingCart } = this.props;
     return search.map((product) => {
       if (search.length !== 0) {
         return (
@@ -22,6 +22,7 @@ class MainPage extends Component {
               id={ product.id }
               key={ product.id }
               produtos={ product }
+              quantityTotalShoppingCart={ quantityTotalShoppingCart }
             />
             <button
               data-testid="product-add-to-cart"
@@ -46,7 +47,8 @@ class MainPage extends Component {
       loadingCategories,
       handleChange,
       searchRequest,
-      search } = this.props;
+      search,
+      quantityTotalShoppingCart } = this.props;
 
     const loadingElement = <Loading />;
     return (
@@ -82,6 +84,7 @@ class MainPage extends Component {
             data-testid="shopping-cart-button"
           >
             <img className="cart-icon" alt="cart icon" src={ ShoppingCartIcon } />
+            <span data-testid="shopping-cart-size">{ quantityTotalShoppingCart }</span>
           </Link>
           { search.length !== 0 ? this.printList(search) : <p> </p> }
         </div>
@@ -99,6 +102,7 @@ MainPage.propTypes = {
   ).isRequired,
   loadingCategories: PropTypes.bool.isRequired,
   inputSearch: PropTypes.string.isRequired,
+  quantityTotalShoppingCart: PropTypes.number.isRequired,
   handleChange: PropTypes.func.isRequired,
   searchRequest: PropTypes.func.isRequired,
   addProductToCart: PropTypes.func.isRequired,
