@@ -5,6 +5,7 @@ import * as api from './services/api';
 import './App.css';
 import ShoppingCart from './Pages/ShoppingCart';
 import ProductDetails from './Pages/ProductDetails';
+import Checkout from './Pages/Checkout';
 
 export default class App extends Component {
   constructor() {
@@ -29,6 +30,7 @@ export default class App extends Component {
     this.deleteProductFromCart = this.deleteProductFromCart.bind(this);
     this.quantityTotalCart = this.quantityTotalCart.bind(this);
     this.saveSession = this.saveSession.bind(this);
+    this.clearCart = this.clearCart.bind(this);
   }
 
   componentDidMount() {
@@ -54,14 +56,16 @@ export default class App extends Component {
   }
 
   handleChange({ target }) {
-    this.setState({
-      [target.name]: target.value,
-    });
+    this.setState({ [target.name]: target.value });
   }
 
   setProductComments(comment) {
     this.setState(({ productComments }) => ({
       productComments: [...productComments, comment] }));
+  }
+
+  clearCart() {
+    this.setState({ shoppingCart: [] });
   }
 
   searchRequest() {
@@ -85,10 +89,8 @@ export default class App extends Component {
       price,
       cart_quantity: 1,
     };
-    // verificar se existe o ítem no carrinho
     const { shoppingCart } = this.state;
     const currentItem = shoppingCart.filter((item) => item.id === newProduct.id);
-    // sim: acrescentar 1 na quantidade
     if (currentItem.length === 0) {
       this.setState(() => ({
         shoppingCart: [...shoppingCart, newProduct],
@@ -129,9 +131,7 @@ export default class App extends Component {
     const { shoppingCart } = this.state;
     const newCart = [];
     shoppingCart.forEach((item) => {
-      if (item.id !== id) {
-        newCart.push(item);
-      }
+      if (item.id !== id) { newCart.push(item); }
     });
     this.setState({
       shoppingCart: newCart,
@@ -187,7 +187,6 @@ export default class App extends Component {
 
     return (
       <BrowserRouter>
-
         <Route
           exact
           path="/"
@@ -205,7 +204,6 @@ export default class App extends Component {
             />)
           }
         />
-
         <Route
           path="/cart"
           render={ () => (<ShoppingCart
@@ -216,7 +214,13 @@ export default class App extends Component {
             deleteProductFromCart={ this.deleteProductFromCart }
           />) }
         />
-
+        <Route
+          path="/checkout"
+          render={ () => (<Checkout
+            shoppingCart={ shoppingCart }
+            clearCart={ this.clearCart }
+          />) }
+        />
         <Route
           exact
           path="/productDetails/:id"
@@ -237,7 +241,6 @@ export default class App extends Component {
             }
           } }
         />
-
       </BrowserRouter>
     );
   }
