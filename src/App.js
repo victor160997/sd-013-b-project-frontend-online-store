@@ -82,11 +82,12 @@ export default class App extends Component {
   }
 
   addProductToCart(product) {
-    const { id, title, price } = product;
+    const { id, title, price, available_quantity: quantity } = product;
     const newProduct = {
       id,
       title,
       price,
+      quantity,
       cart_quantity: 1,
     };
     const { shoppingCart } = this.state;
