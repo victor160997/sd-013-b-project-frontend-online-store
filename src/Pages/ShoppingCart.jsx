@@ -46,56 +46,61 @@ export default class ShoppingCart extends Component {
         </Link>
         {emptyCart && this.elementShoppingCartEmpty()}
         <div>
-          {
-            shoppingCart.map((product) => (
-              <div key={ product.id }>
+          {shoppingCart.map((product) => (
+            <div key={ product.id }>
+              <button
+                type="button"
+                onClick={ () => { deleteProductFromCart(product.id); } }
+              >
+                X
+              </button>
+              <p data-testid="shopping-cart-product-name">{ product.title }</p>
+              <div>
                 <button
+                  data-testid="product-decrease-quantity"
                   type="button"
-                  onClick={ () => { deleteProductFromCart(product.id); } }
+                  onClick={ () => { decreaseProductFromCart(product.id); } }
                 >
-                  X
+                  -
                 </button>
-                <p data-testid="shopping-cart-product-name">{ product.title }</p>
+                <div data-testid="shopping-cart-product-quantity">
+                  { product.cart_quantity }
+                </div>
+                <button
+                  data-testid="product-increase-quantity"
+                  type="button"
+                  onClick={ () => { addProductToCart(product); } }
+                >
+                  +
+                </button>
                 <div>
-                  <button
-                    data-testid="product-decrease-quantity"
-                    type="button"
-                    onClick={ () => { decreaseProductFromCart(product.id); } }
-                  >
-                    -
-                  </button>
-                  <div data-testid="shopping-cart-product-quantity">
-                    { product.cart_quantity }
-                  </div>
-                  <button
-                    data-testid="product-increase-quantity"
-                    type="button"
-                    onClick={ () => { addProductToCart(product); } }
-                  >
-                    +
-                  </button>
-                  <div>
-                    R$
-                    { product.price }
-                    unidade
-                  </div>
-                  <div>
-                    R$
-                    { product.price * product.cart_quantity }
-                  </div>
+                  R$
+                  { product.price }
+                  unidade
+                </div>
+                <div>
+                  R$
+                  { product.price * product.cart_quantity }
                 </div>
               </div>
-            ))
-          }
-        </div>
-        <div>
-          <h3>
-            <span>
-              Valor Total da Compra:
-            </span>
-            R$
-            { this.getTotalCart() }
-          </h3>
+            </div>
+          ))}
+          <div>
+            <h3>
+              <span>
+                Valor Total da Compra:
+              </span>
+              { ` R$ ${this.getTotalCart()}` }
+            </h3>
+          </div>
+          <div>
+            <Link
+              to="/checkout"
+              data-testid="checkout-products"
+            >
+              Finalizar Compra
+            </Link>
+          </div>
         </div>
       </div>
     );
